@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-
+import Image from 'next/image'; // Re-import Image component
 // Define types for the props used in components
 type NavLinkProps = {
   href: string;
@@ -217,7 +217,7 @@ const About = () => {
       <div className="container mx-auto px-4">
         <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-4 border-white shadow-lg">
           {/* Placeholder image, replace with your actual profile picture */}
-          <img
+           <Image
             src="https://placehold.co/128x128/6366f1/ffffff?text=SS"
             alt="Siem Seko Profile"
             width={128}
