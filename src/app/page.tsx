@@ -225,7 +225,7 @@ const About = () => {
             className="w-full h-full object-cover rounded-full"
           />
         </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Hello, I'm Siem Seko</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Hello, I`m Siem Seko</h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 opacity-90">
           A passionate and dedicated professional with a strong background in [Your Field/Area of Expertise]. I thrive on learning new technologies and solving complex problems.
         </p>
