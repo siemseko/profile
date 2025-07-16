@@ -107,7 +107,7 @@ const App = () => {
   }, []); // Empty dependency array means this runs once after initial render
 
   return (
-    <div className="antialiased font-inter">
+    <div className="antialiased font-inter bg-[#dcdee3]">
       {/* Header and Navigation */}
       <Header activeSection={activeSection} />
 
