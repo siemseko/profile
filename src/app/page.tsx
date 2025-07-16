@@ -1,5 +1,4 @@
 'use client'
-import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 // Define types for the props used in components
@@ -7,6 +6,7 @@ type NavLinkProps = {
   href: string;
   text: string;
   activeSection: string;
+  onClick?: () => void; // Added for mobile menu close
 };
 
 type EducationItemProps = {
@@ -39,6 +39,7 @@ type LanguageItemProps = {
 type HeaderProps = {
   activeSection: string;
 };
+
 
 // Main App component
 const App = () => {
@@ -134,16 +135,53 @@ const App = () => {
 
 // Header Component
 const Header: React.FC<HeaderProps> = ({ activeSection }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <header className="bg-white shadow-md fixed w-full z-10 rounded-b-lg">
       <nav className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-        <a href="#" className="text-2xl font-bold text-indigo-600 mb-2 md:mb-0 rounded-md">Siem Seko</a>
-        <div className="flex flex-wrap justify-center space-x-4">
-          <NavLink href="#about" text="About" activeSection={activeSection} />
-          <NavLink href="#education" text="Education" activeSection={activeSection} />
-          <NavLink href="#skills" text="Skills" activeSection={activeSection} />
-          <NavLink href="#experience" text="Experience" activeSection={activeSection} />
-          <NavLink href="#languages" text="Languages" activeSection={activeSection} />
+        <div className="flex justify-between items-center w-full md:w-auto">
+          <a href="#" className="text-2xl font-bold text-indigo-600 rounded-md">Siem Seko</a>
+          {/* Hamburger menu button for mobile */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-gray-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2"
+            aria-label="Toggle navigation menu"
+          >
+            {isMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Navigation links - hidden on mobile by default, shown when menu is open */}
+        <div
+          className={`
+            w-full md:w-auto md:flex md:flex-row md:space-x-4 mt-4 md:mt-0
+            overflow-hidden transition-all duration-500 ease-in-out
+            ${isMenuOpen ? 'max-h-screen' : 'max-h-0'}
+            flex flex-col items-center space-y-2 md:space-y-0
+          `}
+        >
+          <NavLink href="#about" text="About" activeSection={activeSection} onClick={closeMenu} />
+          <NavLink href="#education" text="Education" activeSection={activeSection} onClick={closeMenu} />
+          <NavLink href="#skills" text="Skills" activeSection={activeSection} onClick={closeMenu} />
+          <NavLink href="#experience" text="Experience" activeSection={activeSection} onClick={closeMenu} />
+          <NavLink href="#languages" text="Languages" activeSection={activeSection} onClick={closeMenu} />
         </div>
       </nav>
     </header>
@@ -151,19 +189,20 @@ const Header: React.FC<HeaderProps> = ({ activeSection }) => {
 };
 
 // Navigation Link Component
-const NavLink: React.FC<NavLinkProps> = ({ href, text, activeSection }) => {
+const NavLink: React.FC<NavLinkProps> = ({ href, text, activeSection, onClick }) => {
   // Determine if the current link is active
   const isActive = activeSection === href.substring(1); // Remove '#' from href for comparison
 
   return (
     <a
       href={href}
+      onClick={onClick} // Add onClick handler for mobile menu
       className={`
         ${isActive
           ? "text-indigo-600 bg-indigo-50 font-bold"
           : "text-gray-700 hover:text-indigo-600 font-medium"
         }
-        px-3 py-2 rounded-md transition duration-300
+        px-3 py-2 rounded-md transition duration-300 w-full text-center md:w-auto
       `}
     >
       {text}
@@ -178,14 +217,15 @@ const About = () => {
       <div className="container mx-auto px-4">
         <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-4 border-white shadow-lg">
           {/* Placeholder image, replace with your actual profile picture */}
-          <Image
+          <img
             src="https://placehold.co/128x128/6366f1/ffffff?text=SS"
             alt="Siem Seko Profile"
             width={128}
             height={128}
             className="w-full h-full object-cover rounded-full"
-          />        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Hello, I`m Siem Seko</h1>
+          />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Hello, I'm Siem Seko</h1>
         <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 opacity-90">
           A passionate and dedicated professional with a strong background in [Your Field/Area of Expertise]. I thrive on learning new technologies and solving complex problems.
         </p>
