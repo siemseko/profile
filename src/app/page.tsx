@@ -1,7 +1,7 @@
 // components/WebDeveloperPortfolio.tsx
 // This component demonstrates a basic structure for a personal portfolio section
 // using Next.js (React) with TypeScript and Tailwind CSS.
-
+'use client'
 import React from 'react';
 
 // Define a type for project data to ensure type safety
