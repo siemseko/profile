@@ -1,430 +1,207 @@
-'use client'
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image'; // Re-import Image component
-// Define types for the props used in components
-type NavLinkProps = {
-  href: string;
-  text: string;
-  activeSection: string;
-  onClick?: () => void; // Added for mobile menu close
-};
+// components/WebDeveloperPortfolio.tsx
+// This component demonstrates a basic structure for a personal portfolio section
+// using Next.js (React) with TypeScript and Tailwind CSS.
 
-type EducationItemProps = {
-  degree: string;
-  institution: string;
-  period: string;
-  details: string[];
-};
+import React from 'react';
 
-type SkillCategoryProps = {
+// Define a type for project data to ensure type safety
+interface Project {
+  id: string;
   title: string;
-  skills: string[];
-  bgColor: string;
-  textColor: string;
-};
+  description: string;
+  technologies: string[];
+  liveDemoUrl: string;
+  githubRepoUrl: string;
+  imageUrl: string;
+}
 
-type ExperienceItemProps = {
-  title: string;
-  company: string;
-  location: string;
-  period: string;
-  responsibilities: string[];
-};
-
-type LanguageItemProps = {
-  name: string;
-  proficiency: string;
-};
-
-type HeaderProps = {
-  activeSection: string;
-};
-
-
-// Main App component
-const App = () => {
-  // State to keep track of the currently active section
-  const [activeSection, setActiveSection] = useState<string>('about');
-
-  useEffect(() => {
-    // Options for the Intersection Observer
-    const options: IntersectionObserverInit = {
-      root: null, // Use the viewport as the root
-      rootMargin: '-50% 0px -50% 0px', // When 50% of the section is in view
-      threshold: 0 // As soon as any part of the target enters the viewport
-    };
-
-    // Callback function for the Intersection Observer
-    const observerCallback: IntersectionObserverCallback = (entries) => {
-      entries.forEach(entry => {
-        // If the entry is intersecting and its ID matches a section, set it as active
-        if (entry.isIntersecting && entry.target.id) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    };
-
-    // Create a new Intersection Observer
-    const observer = new IntersectionObserver(observerCallback, options);
-
-    // Get all sections to observe
-    const sections = document.querySelectorAll('section[id]');
-    sections.forEach(section => {
-      observer.observe(section);
-    });
-
-    // Smooth scrolling for navigation links
-    const handleClick = (e: Event) => {
-      e.preventDefault();
-      const targetId = (e.currentTarget as HTMLAnchorElement).getAttribute('href');
-      if (targetId) {
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: 'smooth'
-          });
-          // Immediately set the active section on click
-          setActiveSection(targetId.substring(1)); // Remove '#' from href
-        }
-      }
-    };
-
-    // Get all anchor links and add event listeners
-    const anchors = document.querySelectorAll('a[href^="#"]');
-    anchors.forEach(anchor => {
-      anchor.addEventListener('click', handleClick as EventListener);
-    });
-
-    // Cleanup function for the observer
-    return () => {
-      sections.forEach(section => {
-        observer.unobserve(section);
-      });
-      // Remove event listeners if component unmounts
-      anchors.forEach(anchor => {
-        anchor.removeEventListener('click', handleClick as EventListener);
-      });
-    };
-  }, []); // Empty dependency array means this runs once after initial render
+// Define the main App component for the portfolio section
+const WebDeveloperPortfolio: React.FC = () => {
+  // Example project data
+  const projects: Project[] = [
+    {
+      id: '1',
+      title: 'E-commerce Platform',
+      description: 'A full-stack e-commerce application featuring user authentication, product listings, shopping cart functionality, and secure payment integration.',
+      technologies: ['React', 'Node.js', 'MongoDB', 'Stripe API'],
+      liveDemoUrl: '#', // Replace with actual live demo URL
+      githubRepoUrl: '#', // Replace with actual GitHub repo URL
+      imageUrl: 'https://placehold.co/600x400/E0E7FF/4338CA?text=Project+1+Image',
+    },
+    {
+      id: '2',
+      title: 'Task Management App',
+      description: 'A responsive task management application allowing users to create, organize, and track their daily tasks with real-time updates.',
+      technologies: ['Vue.js', 'Firebase', 'Tailwind CSS'],
+      liveDemoUrl: '#', // Replace with actual live demo URL
+      githubRepoUrl: '#', // Replace with actual GitHub repo URL
+      imageUrl: 'https://placehold.co/600x400/E0E7FF/4338CA?text=Project+2+Image',
+    },
+    {
+      id: '3',
+      title: 'Personal Blog Site',
+      description: 'A minimalist personal blog platform built with a custom CMS, allowing for easy content creation and management.',
+      technologies: ['Python', 'Django', 'PostgreSQL'],
+      liveDemoUrl: '#', // Replace with actual live demo URL
+      githubRepoUrl: '#', // Replace with actual GitHub repo URL
+      imageUrl: 'https://placehold.co/600x400/E0E7FF/4338CA?text=Project+3+Image',
+    },
+  ];
 
   return (
-    <div className="antialiased font-inter bg-[#dcdee3]">
-      {/* Header and Navigation */}
-      <Header activeSection={activeSection} />
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8 font-inter antialiased text-slate-700 bg-slate-50">
 
-      {/* Hero/About Me Section */}
-      <About />
+      {/* Header Section */}
+      <header className="flex flex-col sm:flex-row items-center justify-between py-6 px-4 mb-8 bg-white rounded-xl shadow-md">
+        <div className="text-center sm:text-left mb-4 sm:mb-0">
+          <h1 className="text-4xl font-bold text-slate-900 mb-2">Your Name</h1>
+          <p className="text-xl text-indigo-600 font-medium">Web Developer</p>
+        </div>
+        <nav>
+          <ul className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
+            <li><a href="#about" className="text-slate-700 hover:text-indigo-600 font-medium transition duration-300">About</a></li>
+            <li><a href="#skills" className="text-slate-700 hover:text-indigo-600 font-medium transition duration-300">Skills</a></li>
+            <li><a href="#projects" className="text-slate-700 hover:text-indigo-600 font-medium transition duration-300">Projects</a></li>
+            <li><a href="#contact" className="text-slate-700 hover:text-indigo-600 font-medium transition duration-300">Contact</a></li>
+          </ul>
+        </nav>
+      </header>
 
-      {/* Education Section */}
-      <Education />
+      {/* Hero Section */}
+      <section className="text-center py-16 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-lg mb-12">
+        <h2 className="text-5xl font-extrabold mb-4 leading-tight">Crafting Engaging Web Experiences</h2>
+        <p className="text-xl mb-8 max-w-2xl mx-auto">
+          Passionate about building beautiful, functional, and user-friendly web applications.
+          Let's create something amazing together!
+        </p>
+        <a href="#projects" className="bg-white text-indigo-600 hover:bg-indigo-50 transition duration-300 inline-block text-lg font-semibold py-3 px-6 rounded-lg shadow-md transform hover:scale-105">View My Work</a>
+      </section>
+
+      {/* About Me Section */}
+      <section id="about" className="py-12">
+        <h2 className="text-3xl font-bold text-slate-900 mb-8 relative section-title">About Me</h2>
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <p className="text-lg leading-relaxed mb-4">
+            Hello! I'm <span className="font-semibold text-indigo-600">Your Name</span>, a dedicated Web Developer with X years of experience in creating dynamic and responsive web applications. My journey into web development began with a fascination for how digital experiences are built, and it has since evolved into a passion for solving complex problems and bringing ideas to life through code.
+          </p>
+          <p className="text-lg leading-relaxed mb-4">
+            I specialize in <span className="font-semibold text-slate-800">front-end development</span>, with a strong focus on creating intuitive user interfaces and seamless user experiences. I am proficient in modern JavaScript frameworks and libraries, and I always strive to write clean, efficient, and maintainable code.
+          </p>
+          <p className="text-lg leading-relaxed">
+            Beyond coding, I enjoy staying updated with the latest web technologies, contributing to open-source projects, and continuously learning new skills. I believe in the power of collaboration and am always excited to work with teams that share a passion for innovation and excellence.
+          </p>
+        </div>
+      </section>
 
       {/* Skills Section */}
-      <Skills />
+      <section id="skills" className="py-12">
+        <h2 className="text-3xl font-bold text-slate-900 mb-8 relative section-title">Skills</h2>
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="mb-6">
+            <h3 className="text-2xl font-semibold text-slate-800 mb-4">Front-End</h3>
+            <div className="flex flex-wrap gap-3">
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">HTML5</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">CSS3</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">JavaScript (ES6+)</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">React.js</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Vue.js</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Angular</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Tailwind CSS</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Bootstrap</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Responsive Design</span>
+            </div>
+          </div>
+          <div className="mb-6">
+            <h3 className="text-2xl font-semibold text-slate-800 mb-4">Back-End</h3>
+            <div className="flex flex-wrap gap-3">
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Node.js</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Express.js</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Python</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Django</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">PHP</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Laravel</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">RESTful APIs</span>
+            </div>
+          </div>
+          <div className="mb-6">
+            <h3 className="text-2xl font-semibold text-slate-800 mb-4">Databases</h3>
+            <div className="flex flex-wrap gap-3">
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">MongoDB</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">PostgreSQL</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">MySQL</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Firebase</span>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-2xl font-semibold text-slate-800 mb-4">Tools & Others</h3>
+            <div className="flex flex-wrap gap-3">
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Git</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">GitHub</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">VS Code</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Webpack</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Netlify</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Heroku</span>
+              <span className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">Agile Methodologies</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Work Experience Section */}
-      <Experience />
+      {/* Projects Section */}
+      <section id="projects" className="py-12">
+        <h2 className="text-3xl font-bold text-slate-900 mb-8 relative section-title">Projects</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {projects.map((project) => (
+            <div key={project.id} className="bg-white rounded-xl shadow-md p-6 flex flex-col">
+              <img src={project.imageUrl} alt={project.title} className="w-full h-48 object-cover rounded-lg mb-4" />
+              <h3 className="text-2xl font-semibold text-slate-800 mb-2">{project.title}</h3>
+              <p className="text-slate-600 mb-4 flex-grow">{project.description}</p>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {project.technologies.map((tech, index) => (
+                  <span key={index} className="bg-indigo-100 text-indigo-700 py-1.5 px-3 rounded-lg text-sm font-medium">{tech}</span>
+                ))}
+              </div>
+              <div className="flex justify-between items-center mt-auto">
+                <a href={project.liveDemoUrl} className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-300" target="_blank" rel="noopener noreferrer">Live Demo</a>
+                <a href={project.githubRepoUrl} className="text-slate-600 hover:text-slate-800 font-medium transition duration-300" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Languages Section */}
-      <Languages />
+      {/* Contact Section */}
+      <section id="contact" className="py-12">
+        <h2 className="text-3xl font-bold text-slate-900 mb-8 relative section-title">Contact Me</h2>
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <p className="text-lg leading-relaxed mb-6">
+            I'm always open to new opportunities, collaborations, and interesting projects. Feel free to reach out!
+          </p>
+          <div className="space-y-4">
+            <p className="text-lg">
+              <span className="font-semibold text-slate-800">Email:</span> <a href="mailto:your.email@example.com" className="text-indigo-600 hover:underline">your.email@example.com</a>
+            </p>
+            <p className="text-lg">
+              <span className="font-semibold text-slate-800">LinkedIn:</span> <a href="https://www.linkedin.com/in/yourprofile" className="text-indigo-600 hover:underline" target="_blank" rel="noopener noreferrer">linkedin.com/in/yourprofile</a>
+            </p>
+            <p className="text-lg">
+              <span className="font-semibold text-slate-800">GitHub:</span> <a href="https://github.com/yourusername" className="text-indigo-600 hover:underline" target="_blank" rel="noopener noreferrer">github.com/yourusername</a>
+            </p>
+            <p className="text-lg">
+              <span className="font-semibold text-slate-800">Location:</span> Phnom Penh, Cambodia (or Remote)
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <Footer />
+      <footer className="text-center py-8 mt-12 text-slate-600 border-t border-slate-200">
+        <p>&copy; 2025 Your Name. All rights reserved.</p>
+      </footer>
+
     </div>
   );
 };
 
-// Header Component
-const Header: React.FC<HeaderProps> = ({ activeSection }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
-  return (
-    <header className="bg-white shadow-md fixed w-full z-10 rounded-b-lg">
-      <nav className="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-        <div className="flex justify-between items-center w-full md:w-auto">
-          <a href="#" className="text-2xl font-bold text-indigo-600 rounded-md">Siem Seko</a>
-          {/* Hamburger menu button for mobile */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden text-gray-700 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2"
-            aria-label="Toggle navigation menu"
-          >
-            {isMenuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {/* Navigation links - hidden on mobile by default, shown when menu is open */}
-        <div
-          className={`
-            w-full md:w-auto md:flex md:flex-row md:space-x-4 mt-4 md:mt-0
-            overflow-hidden transition-all duration-500 ease-in-out
-            ${isMenuOpen ? 'max-h-screen' : 'max-h-0'}
-            flex flex-col items-center space-y-2 md:space-y-0
-          `}
-        >
-          <NavLink href="#about" text="About" activeSection={activeSection} onClick={closeMenu} />
-          <NavLink href="#education" text="Education" activeSection={activeSection} onClick={closeMenu} />
-          <NavLink href="#skills" text="Skills" activeSection={activeSection} onClick={closeMenu} />
-          <NavLink href="#experience" text="Experience" activeSection={activeSection} onClick={closeMenu} />
-          <NavLink href="#languages" text="Languages" activeSection={activeSection} onClick={closeMenu} />
-        </div>
-      </nav>
-    </header>
-  );
-};
-
-// Navigation Link Component
-const NavLink: React.FC<NavLinkProps> = ({ href, text, activeSection, onClick }) => {
-  // Determine if the current link is active
-  const isActive = activeSection === href.substring(1); // Remove '#' from href for comparison
-
-  return (
-    <a
-      href={href}
-      onClick={onClick} // Add onClick handler for mobile menu
-      className={`
-        ${isActive
-          ? "text-indigo-600 bg-indigo-50 font-bold"
-          : "text-gray-700 hover:text-indigo-600 font-medium"
-        }
-        px-3 py-2 rounded-md transition duration-300 w-full text-center md:w-auto
-      `}
-    >
-      {text}
-    </a>
-  );
-};
-
-// About Me Component
-const About = () => {
-  return (
-    <section id="about" className="section-padding bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-center pt-28 rounded-b-lg shadow-lg">
-      <div className="container mx-auto px-4">
-        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-6 border-4 border-white shadow-lg">
-          {/* Placeholder image, replace with your actual profile picture */}
-           <Image
-            src="https://placehold.co/128x128/6366f1/ffffff?text=SS"
-            alt="Siem Seko Profile"
-            width={128}
-            height={128}
-            className="w-full h-full object-cover rounded-full"
-          />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Hello, I`m Siem Seko</h1>
-        <p className="text-lg md:text-xl max-w-2xl mx-auto mb-8 opacity-90">
-          A passionate and dedicated professional with a strong background in [Your Field/Area of Expertise]. I thrive on learning new technologies and solving complex problems.
-        </p>
-        <a href="#experience" className="inline-block bg-white text-indigo-600 hover:bg-gray-100 font-bold py-3 px-8 mb-5 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
-          View My Work
-        </a>
-      </div>
-    </section>
-  );
-};
-
-// Education Component
-const Education = () => {
-  return (
-    <section id="education" className="section-padding bg-white rounded-lg shadow-md my-8 mx-4 md:mx-auto max-w-7xl">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">Education</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Education Item 1 */}
-          <EducationItem
-            degree="Bachelor of Science in Computer Science"
-            institution="Royal University of Phnom Penh"
-            period="September 2018 - July 2022"
-            details={[
-              "Graduated with Honors",
-              "Relevant Coursework: Data Structures, Algorithms, Web Development, Database Systems",
-              "Capstone Project: [Brief description of your project]"
-            ]}
-          />
-          {/* Education Item 2 (Optional) */}
-          <EducationItem
-            degree="High School Diploma"
-            institution="Preah Sisowath High School"
-            period="September 2015 - July 2018"
-            details={[
-              "Focused on Science and Mathematics",
-              "Participated in [mention any clubs/activities]"
-            ]}
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Education Item Component
-const EducationItem: React.FC<EducationItemProps> = ({ degree, institution, period, details }) => (
-  <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
-    <h3 className="text-xl font-semibold text-indigo-700 mb-2">{degree}</h3>
-    <p className="text-gray-600 mb-1">{institution}</p>
-    <p className="text-sm text-gray-500">{period}</p>
-    <ul className="list-disc list-inside text-gray-700 mt-4 space-y-1">
-      {details.map((detail, index) => (
-        <li key={index}>{detail}</li>
-      ))}
-    </ul>
-  </div>
-);
-
-// Skills Component
-const Skills = () => {
-  return (
-    <section id="skills" className="section-padding bg-gray-100 rounded-lg shadow-md my-8 mx-4 md:mx-auto max-w-7xl">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">Skills</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SkillCategory
-            title="Technical Skills"
-            skills={[
-              "HTML", "CSS (Tailwind CSS)", "JavaScript", "React.js", "Node.js",
-              "Python", "SQL (PostgreSQL, MySQL)", "Git/GitHub", "RESTful APIs"
-            ]}
-            bgColor="bg-indigo-100"
-            textColor="text-indigo-800"
-          />
-          <SkillCategory
-            title="Software & Tools"
-            skills={[
-              "VS Code", "Figma", "Jira", "Docker", "AWS (S3, EC2)"
-            ]}
-            bgColor="bg-green-100"
-            textColor="text-green-800"
-          />
-          <SkillCategory
-            title="Soft Skills"
-            skills={[
-              "Problem-Solving", "Communication", "Teamwork", "Adaptability", "Time Management"
-            ]}
-            bgColor="bg-yellow-100"
-            textColor="text-yellow-800"
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Skill Category Component
-const SkillCategory: React.FC<SkillCategoryProps> = ({ title, skills, bgColor, textColor }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
-    <h3 className="text-xl font-semibold text-indigo-700 mb-4">{title}</h3>
-    <div className="flex flex-wrap gap-2">
-      {skills.map((skill, index) => (
-        <span key={index} className={`${bgColor} ${textColor} text-sm font-medium px-3 py-1 rounded-full`}>
-          {skill}
-        </span>
-      ))}
-    </div>
-  </div>
-);
-
-// Work Experience Component
-const Experience = () => {
-  return (
-    <section id="experience" className="section-padding bg-white rounded-lg shadow-md my-8 mx-4 md:mx-auto max-w-7xl">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">Work Experience</h2>
-        <div className="space-y-8">
-          {/* Experience Item 1 */}
-          <ExperienceItem
-            title="Software Developer"
-            company="Tech Solutions Inc."
-            location="Phnom Penh"
-            period="August 2022 - Present"
-            responsibilities={[
-              "Developed and maintained web applications using React.js and Node.js, improving performance by 15%.",
-              "Collaborated with cross-functional teams to define, design, and ship new features.",
-              "Implemented RESTful APIs for data integration and improved system scalability.",
-              "Participated in code reviews, ensuring high-quality code and adherence to best practices."
-            ]}
-          />
-          {/* Experience Item 2 (Optional) */}
-          <ExperienceItem
-            title="Junior Web Developer Intern"
-            company="Creative Designs Agency"
-            location="Siem Reap"
-            period="June 2021 - August 2021"
-            responsibilities={[
-              "Assisted in front-end development using HTML, CSS, and JavaScript for client websites.",
-              "Learned responsive design principles and implemented them across various projects.",
-              "Contributed to debugging and testing efforts, ensuring website functionality."
-            ]}
-          />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Experience Item Component
-const ExperienceItem: React.FC<ExperienceItemProps> = ({ title, company, location, period, responsibilities }) => (
-  <div className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 border border-gray-200">
-    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-2">
-      <h3 className="text-xl font-semibold text-indigo-700">{title}</h3>
-      <p className="text-gray-600 text-sm md:text-base">{company}, {location}</p>
-    </div>
-    <p className="text-sm text-gray-500 mb-4">{period}</p>
-    <ul className="list-disc list-inside text-gray-700 space-y-2">
-      {responsibilities.map((responsibility, index) => (
-        <li key={index}>{responsibility}</li>
-      ))}
-    </ul>
-  </div>
-);
-
-// Languages Component
-const Languages = () => {
-  return (
-    <section id="languages" className="section-padding bg-gray-100 rounded-lg shadow-md my-8 mx-4 md:mx-auto max-w-7xl">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12">Languages</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <LanguageItem name="Khmer" proficiency="Native" />
-          <LanguageItem name="English" proficiency="Fluent (Professional Working Proficiency)" />
-          <LanguageItem name="French" proficiency="Basic (Conversational)" />
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Language Item Component
-const LanguageItem: React.FC<LanguageItemProps> = ({ name, proficiency }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300 border border-gray-200 text-center">
-    <h3 className="text-xl font-semibold text-indigo-700 mb-2">{name}</h3>
-    <p className="text-gray-600">{proficiency}</p>
-  </div>
-);
-
-// Footer Component
-const Footer = () => {
-  return (
-    <footer className="bg-gray-800 text-white py-8 text-center rounded-t-lg shadow-lg">
-      <div className="container mx-auto px-4">
-        <p>&copy; 2025 Siem Seko. All rights reserved.</p>
-        <p className="text-sm mt-2">Built with ❤️ and Tailwind CSS</p>
-      </div>
-    </footer>
-  );
-};
-
-export default App;
+// Export the component as default for Next.js page or component usage
+export default WebDeveloperPortfolio;
